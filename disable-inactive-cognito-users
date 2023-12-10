@@ -39,6 +39,7 @@ def lambda_handler(event, context):
             UserPoolId=user_pool_id,
             Username=username,
         )
+        # filter out users automatically created by external provider
         if admin_user["UserStatus"] != 'EXTERNAL_PROVIDER':
             print(admin_user['Username'])
             username=admin_user['Username']
