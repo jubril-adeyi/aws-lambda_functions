@@ -12,7 +12,7 @@ cognito_client = boto3.client('cognito-idp')
 
 def list_all_users():
     response = cognito_client.list_users(
-        UserPoolId=user_pool_id,
+        UserPoolId=USERPOOL_ID,
         Limit=60
     )
     
@@ -20,7 +20,7 @@ def list_all_users():
     
     while 'PaginationToken' in response:
         response = cognito_client.list_users(
-            UserPoolId=user_pool_id,
+            UserPoolId=USERPOOL_ID,
             PaginationToken=response['PaginationToken'],
             Limit=60
         )
@@ -36,7 +36,7 @@ def lambda_handler(event, context):
         username = user['Username']
         
         admin_user=cognito_client.admin_get_user(
-            UserPoolId=user_pool_id,
+            UserPoolId=USERPOOL_ID,
             Username=username,
         )
         # filter out users automatically created by external provider
@@ -47,7 +47,7 @@ def lambda_handler(event, context):
 
             # Get the user's authentication events
             admin_list = cognito_client.admin_list_user_auth_events(
-                UserPoolId=user_pool_id,
+                UserPoolId=USERPOOL_ID,
                 Username=username,
                 MaxResults=1
             )
@@ -70,7 +70,7 @@ def lambda_handler(event, context):
                 if time_difference > timedelta(days=90):
                     # Disable the user
                     cognito_client.admin_disable_user(
-                        UserPoolId=user_pool_id,
+                        UserPoolId=USERPOOL_ID,
                         Username=username
                     )
 
@@ -83,7 +83,7 @@ def lambda_handler(event, context):
                 if time_difference > timedelta(days=90):
                     # Disable the user
                     cognito_client.admin_disable_user(
-                        UserPoolId=user_pool_id,
+                        UserPoolId=USERPOOL_ID,
                         Username=username
                     )
                     print(f"User {username} has been disabled.")
